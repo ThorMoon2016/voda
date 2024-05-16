@@ -7,7 +7,7 @@
 </head>
 <body>
   <h1>Unesi proizvod</h1>
-  <form action="voda.html" method="GET">
+  <form id="product-form">
     <label for="naziv">Naziv:</label>
     <input type="text" id="naziv" name="naziv"><br><br>
 
@@ -24,39 +24,35 @@
     <input type="submit" value="Spremi">
   </form>
 
-  <script src="putanja/do/firebase-init.js"></script>
-
+  <script src="firebase-init.js"></script>
 
   <script>
-    // Provjeri postojanje db objekta prije korištenja
-if (typeof db !== 'undefined') {
-  // Ovdje se može nastaviti s kodom za događaje nakon inicijalizacije
-  document.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const naziv = document.getElementById('naziv').value;
-    const cijena = document.getElementById('cijena').value;
-    const kategorija = document.getElementById('kategorija').value;
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof db !== 'undefined') {
+        document.querySelector('#product-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const naziv = document.getElementById('naziv').value;
+          const cijena = document.getElementById('cijena').value;
+          const kategorija = document.getElementById('kategorija').value;
 
-    try {
-      await db.collection('proizvodi').add({
-        naziv: naziv,
-        cijena: cijena,
-        kategorija: kategorija
-      });
-      alert('Proizvod je spremljen u Firestore!');
-      // Redirect na drugu stranicu
-      window.location.href = 'voda.html?naziv=' + naziv + '&cijena=' + cijena + '&kategorija=' + kategorija;
-    } catch (error) {
-      console.error('Greška pri spremanju proizvoda:', error);
-      alert('Došlo je do greške pri spremanju proizvoda.');
-    }
-  });
-} else {
-  console.error('Objekt db nije inicijaliziran.');
-  alert('Došlo je do greške pri inicijalizaciji Firebase-a.');
-}
-
+          try {
+            await db.collection('proizvodi').add({
+              naziv: naziv,
+              cijena: cijena,
+              kategorija: kategorija
+            });
+            alert('Proizvod je spremljen u Firestore!');
+            window.location.href = 'voda.html?naziv=' + encodeURIComponent(naziv) + '&cijena=' + encodeURIComponent(cijena) + '&kategorija=' + encodeURIComponent(kategorija);
+          } catch (error) {
+            console.error('Greška pri spremanju proizvoda:', error);
+            alert('Došlo je do greške pri spremanju proizvoda.');
+          }
+        });
+      } else {
+        console.error('Objekt db nije inicijaliziran.');
+        alert('Došlo je do greške pri inicijalizaciji Firebase-a.');
+      }
+    });
   </script>
-
 </body>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podaci o proizvodu</title>
+</head>
+<body>
+  <h1>Podaci o proizvodu</h1>
+  <div id="podaci">
+    <p>Naziv: <span id="naziv"></span></p>
+    <p>Cijena: <span id="cijena"></span></p>
+  </div>
+
+  <script src="putanja/do/firebase-init.js"></script>
+
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+const naziv = params.get('naziv');
+
+// Dohvati podatke iz Firestore-a na osnovu naziva
+db.collection('proizvodi').where('naziv', '==', naziv).get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      document.getElementById('naziv').textContent = data.naziv;
+      document.getElementById('cijena').textContent = data.cijena;
+    });
+  })
+  .catch((error) => {
+    console.error('Greška pri dohvaćanju podataka:', error);
+    document.getElementById('podaci').innerHTML = '<p>Greška pri dohvaćanju podataka.</p>';
+  });
+
+  </script>
+
+
+</body>
+</html>

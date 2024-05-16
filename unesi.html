@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unesi proizvod</title>
+</head>
+<body>
+  <h1>Unesi proizvod</h1>
+  <form action="voda.html" method="GET">
+    <label for="naziv">Naziv:</label>
+    <input type="text" id="naziv" name="naziv"><br><br>
+
+    <label for="cijena">Cijena:</label>
+    <input type="number" id="cijena" name="cijena"><br><br>
+
+    <label for="kategorija">Kategorija:</label>
+    <select id="kategorija" name="kategorija">
+      <option value="voda">Voda</option>
+      <option value="meso">Meso</option>
+      <option value="voce">Voće</option>
+    </select><br><br>
+
+    <input type="submit" value="Spremi">
+  </form>
+
+  <script src="putanja/do/firebase-init.js"></script>
+
+
+  <script>
+    // Provjeri postojanje db objekta prije korištenja
+if (typeof db !== 'undefined') {
+  // Ovdje se može nastaviti s kodom za događaje nakon inicijalizacije
+  document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const naziv = document.getElementById('naziv').value;
+    const cijena = document.getElementById('cijena').value;
+    const kategorija = document.getElementById('kategorija').value;
+
+    try {
+      await db.collection('proizvodi').add({
+        naziv: naziv,
+        cijena: cijena,
+        kategorija: kategorija
+      });
+      alert('Proizvod je spremljen u Firestore!');
+      // Redirect na drugu stranicu
+      window.location.href = 'voda.html?naziv=' + naziv + '&cijena=' + cijena + '&kategorija=' + kategorija;
+    } catch (error) {
+      console.error('Greška pri spremanju proizvoda:', error);
+      alert('Došlo je do greške pri spremanju proizvoda.');
+    }
+  });
+} else {
+  console.error('Objekt db nije inicijaliziran.');
+  alert('Došlo je do greške pri inicijalizaciji Firebase-a.');
+}
+
+  </script>
+
+</body>
+</html>

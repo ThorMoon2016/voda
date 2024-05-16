@@ -12,29 +12,31 @@
     <p>Cijena: <span id="cijena"></span></p>
   </div>
 
-  <script src="putanja/do/firebase-init.js"></script>
-
+  <script src="firebase-init.js"></script>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-const naziv = params.get('naziv');
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const naziv = params.get('naziv');
 
-// Dohvati podatke iz Firestore-a na osnovu naziva
-db.collection('proizvodi').where('naziv', '==', naziv).get()
-  .then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      document.getElementById('naziv').textContent = data.naziv;
-      document.getElementById('cijena').textContent = data.cijena;
+      if (typeof db !== 'undefined') {
+        db.collection('proizvodi').where('naziv', '==', naziv).get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              document.getElementById('naziv').textContent = data.naziv;
+              document.getElementById('cijena').textContent = data.cijena;
+            });
+          })
+          .catch((error) => {
+            console.error('Greška pri dohvaćanju podataka:', error);
+            document.getElementById('podaci').innerHTML = '<p>Greška pri dohvaćanju podataka.</p>';
+          });
+      } else {
+        console.error('Objekt db nije inicijaliziran.');
+        document.getElementById('podaci').innerHTML = '<p>Došlo je do greške pri inicijalizaciji Firebase-a.</p>';
+      }
     });
-  })
-  .catch((error) => {
-    console.error('Greška pri dohvaćanju podataka:', error);
-    document.getElementById('podaci').innerHTML = '<p>Greška pri dohvaćanju podataka.</p>';
-  });
-
   </script>
-
-
 </body>
 </html>

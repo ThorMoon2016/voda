@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <html lang="hr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Podaci o proizvodu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proizvodi Voda</title>
 </head>
 <body>
-  <h1>Podaci o proizvodu</h1>
-  <div id="podaci">
-    <p>Naziv: <span id="naziv"></span></p>
-    <p>Cijena: <span id="cijena"></span></p>
-  </div>
+    <h1>Proizvodi u kategoriji Voda</h1>
+    <ul id="product-list"></ul>
 
-  <script src="firebase-init.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const naziv = params.get('naziv');
+        const firebaseConfig = {
+    apiKey: "AIzaSyDiKlHEWyv9tm8Y1yD2-zU5rfxSo_eUmvo",
+    authDomain: "voda-3e56f.firebaseapp.com",
+    projectId: "voda-3e56f",
+    storageBucket: "voda-3e56f.appspot.com",
+    messagingSenderId: "181585863841",
+    appId: "1:181585863841:web:4446f565c29f8b88e2fce0",
+    measurementId: "G-GL6E58EYNY"
+  };
 
-      if (typeof db !== 'undefined') {
-        db.collection('proizvodi').where('naziv', '==', naziv).get()
-          .then((querySnapshot) => {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const productList = document.getElementById('product-list');
+
+        async function fetchProducts() {
+            const q = query(collection(db, 'proizvodi'), where('category', '==', 'voda'));
+            const querySnapshot = await getDocs(q);
+
             querySnapshot.forEach((doc) => {
-              const data = doc.data();
-              document.getElementById('naziv').textContent = data.naziv;
-              document.getElementById('cijena').textContent = data.cijena;
+                const li = document.createElement('li');
+                li.textContent = `${doc.data().name} - ${doc.data().price} HRK`;
+                productList.appendChild(li);
             });
-          })
-          .catch((error) => {
-            console.error('Greška pri dohvaćanju podataka:', error);
-            document.getElementById('podaci').innerHTML = '<p>Greška pri dohvaćanju podataka.</p>';
-          });
-      } else {
-        console.error('Objekt db nije inicijaliziran.');
-        document.getElementById('podaci').innerHTML = '<p>Došlo je do greške pri inicijalizaciji Firebase-a.</p>';
-      }
-    });
-  </script>
+        }
+
+        fetchProducts();
+    </script>
 </body>
 </html>

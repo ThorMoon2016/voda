@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korpa</title>
+    <style>
+        /* Stilizacija za bolji izgled */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #cart-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .product {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .product img {
+            margin-right: 10px;
+        }
+
+        .product h3 {
+            margin: 0;
+        }
+
+        .product p {
+            margin: 0;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vaša korpa</h1>
+    <ul id="cart-list"></ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartItems = JSON.parse(localStorage.getItem('proizvodiUKorpi')) || [];
+            const cartList = document.getElementById('cart-list');
+        
+            cartItems.forEach(item => {
+                const li = document.createElement('li');
+                
+                const img = document.createElement('img');
+                img.src = item.imageUrl;
+                img.alt = item.naziv;
+                img.style.width = '100px';
+        
+                const h3 = document.createElement('h3');
+                h3.textContent = item.naziv;
+        
+                const price = document.createElement('p');
+                price.textContent = `${item.cijena} HRK`;
+        
+                const quantity = document.createElement('p');
+                quantity.textContent = `Količina: ${item.količina}`;
+        
+                li.appendChild(img);
+                li.appendChild(h3);
+                li.appendChild(price);
+                li.appendChild(quantity);
+        
+                cartList.appendChild(li);
+            });
+        });
+        </script>
+        
+</body>
+</html>
